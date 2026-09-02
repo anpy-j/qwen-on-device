@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 内容卡片：玻璃质感（浅色=白卡+描边，深色=深蓝卡+描边） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="@dimen/corner_card_lg" />
+    <solid android:color="@color/card_bg" />
+    <stroke android:width="1dp" android:color="@color/card_stroke" />
+</shape>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  QwenOnDevice 设计令牌（浅色基线）。
+  色板来源：design-system/qwenondevice/MASTER.md（Personal Finance Tracker · Glassmorphism）
+  信任蓝 #1E40AF + 收益绿 #059669；深色 Hero 卡片在深浅模式下保持一致。
+-->
+<resources>
+    <!-- ===== 品牌主色（信任蓝，深浅色通用） ===== -->
+    <color name="primary">#1E40AF</color>
+    <color name="primary_gradient_start">#1E40AF</color>
+    <color name="primary_gradient_end">#1D4ED8</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="primary_container">#DBEAFE</color>
+    <color name="on_primary_container">#1E3A8A</color>
+
+    <color name="secondary">#3B82F6</color>
+    <color name="secondary_gradient_start">#3B82F6</color>
+    <color name="secondary_gradient_end">#2563EB</color>
+    <color name="on_secondary">#FFFFFF</color>
+
+    <!-- ===== 强调 / CTA（收益绿）与破坏色 ===== -->
+    <color name="accent">#059669</color>
+    <color name="on_accent">#FFFFFF</color>
+    <color name="destructive">#DC2626</color>
+    <color name="on_destructive">#FFFFFF</color>
+
+    <!-- ===== 深色 Hero 卡片（顶栏 + 资产看板，深浅色通用） ===== -->
+    <color name="hero_surface_top">#1E293B</color>
+    <color name="hero_surface_center">#0F172A</color>
+    <color name="hero_surface_bottom">#020617</color>
+    <color name="hero_outline">#334155</color>
+    <color name="hero_on">#FFFFFF</color>
+    <color name="hero_on_muted">#94A3B8</color>
+    <color name="hero_on_faint">#CBD5E1</color>
+    <color name="hero_chip_bg">#334155</color>
+    <color name="hero_icon">#93C5FD</color>
+
+    <!-- ===== 浅色语义角色色（深色在 values-night 覆盖） ===== -->
+    <color name="background">#F5F7FB</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#EDF1F7</color>
+    <color name="on_surface">#0F172A</color>
+    <color name="on_surface_variant">#475569</color>
+    <color name="on_surface_faint">#94A3B8</color>
+    <color name="outline">#E2E8F0</color>
+    <color name="outline_variant">#CBD5E1</color>
+
+    <!-- 卡片 / 输入框 / 胶囊（玻璃质感：纯色 + 1px 描边） -->
+    <color name="card_bg">#FFFFFF</color>
+    <color name="card_stroke">#E6EAF2</color>
+    <color name="chip_bg">#EDF1F7</color>
+    <color name="input_bg">#FFFFFF</color>
+    <color name="input_stroke">#E2E8F0</color>
+    <color name="chip_stroke">#DDE3EE</color>
+    <color name="icon_muted">#475569</color>
+    <color name="status_dot">#10B981</color>
+
+    <!-- 数据角色色：支出 / 收入 / 结余 -->
+    <color name="stat_negative">#E11D48</color>
+    <color name="stat_positive">#059669</color>
+    <color name="stat_neutral">#1E40AF</color>
+
+    <!-- 功能横幅容器色（各页面顶部提示条） -->
+    <color name="banner_amber_bg">#FFFBEB</color>
+    <color name="banner_amber_outline">#FDE68A</color>
+    <color name="banner_amber_on">#92400E</color>
+
+    <color name="banner_blue_bg">#F0F7FF</color>
+    <color name="banner_blue_outline">#BFDBFE</color>
+    <color name="banner_blue_on">#1D4ED8</color>
+
+    <color name="banner_purple_bg">#FAF5FF</color>
+    <color name="banner_purple_outline">#E9D5FF</color>
+    <color name="banner_purple_on">#6B21A8</color>
+
+    <color name="banner_rose_bg">#FFF1F2</color>
+    <color name="banner_rose_outline">#FECDD3</color>
+    <color name="banner_rose_on">#BE123C</color>
+</resources>

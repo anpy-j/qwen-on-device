@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 深色模式覆盖：MASTER.md 深色金融面板（背景 #0F172A · 卡片 #192134 · 描边 white 8%） -->
+<resources>
+    <!-- 深色下主色提亮为高亮蓝，保证填充与文字对比 -->
+    <color name="primary">#3B82F6</color>
+    <color name="primary_container">#1E3A8A</color>
+    <color name="on_primary_container">#DBEAFE</color>
+    <color name="secondary">#60A5FA</color>
+
+    <color name="accent">#10B981</color>
+    <color name="destructive">#F87171</color>
+    <color name="hero_icon">#BFDBFE</color>
+
+    <color name="background">#0F172A</color>
+    <color name="surface">#131C31</color>
+    <color name="surface_variant">#1B2540</color>
+    <color name="on_surface">#F1F5F9</color>
+    <color name="on_surface_variant">#CBD5E1</color>
+    <color name="on_surface_faint">#94A3B8</color>
+    <color name="outline">#23304D</color>
+    <color name="outline_variant">#354563</color>
+
+    <color name="card_bg">#192134</color>
+    <color name="card_stroke">#26314D</color>
+    <color name="chip_bg">#1B2540</color>
+    <color name="input_bg">#131C31</color>
+    <color name="input_stroke">#26314D</color>
+    <color name="chip_stroke">#2A3654</color>
+    <color name="icon_muted">#A6B2C7</color>
+    <color name="status_dot">#34D399</color>
+
+    <color name="stat_negative">#FB7185</color>
+    <color name="stat_positive">#34D399</color>
+    <color name="stat_neutral">#93C5FD</color>
+
+    <color name="banner_amber_bg">#2B2008</color>
+    <color name="banner_amber_outline">#8A6A1F</color>
+    <color name="banner_amber_on">#FDE68A</color>
+
+    <color name="banner_blue_bg">#101F3A</color>
+    <color name="banner_blue_outline">#1D4ED8</color>
+    <color name="banner_blue_on">#BFDBFE</color>
+
+    <color name="banner_purple_bg">#241033</color>
+    <color name="banner_purple_outline">#7E22CE</color>
+    <color name="banner_purple_on">#E9D5FF</color>
+
+    <color name="banner_rose_bg">#33091A</color>
+    <color name="banner_rose_outline">#BE123C</color>
+    <color name="banner_rose_on">#FECDD3</color>
+</resources>

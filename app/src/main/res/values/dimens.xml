@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- M3 设计令牌：type scale / shape scale / touch targets / 8dp 间距网格 -->
+<resources>
+    <!-- 字号：type scale -->
+    <dimen name="text_stat">20sp</dimen>
+    <dimen name="text_title">16sp</dimen>
+    <dimen name="text_button">14sp</dimen>
+    <dimen name="text_label">12sp</dimen>
+    <dimen name="text_label_small">11sp</dimen>
+    <dimen name="text_log">13sp</dimen>
+
+    <!-- 圆角：large 16 / hero 20 / 输入框 26 -->
+    <dimen name="corner_card">16dp</dimen>
+    <dimen name="corner_card_lg">20dp</dimen>
+    <dimen name="corner_banner">12dp</dimen>
+    <dimen name="corner_input">26dp</dimen>
+    <dimen name="radius_pill_md">20dp</dimen>
+    <dimen name="radius_pill_lg">24dp</dimen>
+
+    <!-- 控件高度：主操作 48dp，胶囊 40dp -->
+    <dimen name="height_button_primary">48dp</dimen>
+    <dimen name="height_chip">40dp</dimen>
+
+    <!-- 间距：4/8/16/24 网格 -->
+    <dimen name="space_xs">4dp</dimen>
+    <dimen name="space_sm">8dp</dimen>
+    <dimen name="space_md">12dp</dimen>
+    <dimen name="space_lg">16dp</dimen>
+    <dimen name="space_xl">24dp</dimen>
+
+    <!-- 图标与圆点 -->
+    <dimen name="size_icon">20dp</dimen>
+    <dimen name="size_icon_lg">22dp</dimen>
+    <dimen name="size_dot">8dp</dimen>
+
+    <!-- 卡片内边距 -->
+    <dimen name="card_padding">16dp</dimen>
+
+    <!-- 底部输入栏抬升 -->
+    <dimen name="elevation_input_bar">4dp</dimen>
+</resources>

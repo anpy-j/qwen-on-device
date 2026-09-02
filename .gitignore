@@ -1,0 +1,13 @@
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+.DS_Store
+models/
+app/release.jks
+.agent_context/
+.multica/
+.opencode/
+AGENTS.md
+description.md

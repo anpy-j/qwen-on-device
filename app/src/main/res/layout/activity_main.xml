@@ -1,0 +1,696 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  商业化重构版主界面（2026-09）
+  设计系统：design-system/qwenondevice/MASTER.md — Personal Finance Tracker · Glassmorphism
+  信任蓝 #1E40AF + 收益绿 #059669，深色 Hero 卡 + 玻璃卡片，全量矢量图标（禁用 emoji 图标）
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background">
+
+    <!-- ================= 顶部 Hero：品牌 + 引擎状态 ================= -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_card_gradient_dark"
+        android:layout_margin="@dimen/space_sm"
+        android:paddingStart="@dimen/space_lg"
+        android:paddingEnd="@dimen/space_lg"
+        android:paddingTop="@dimen/space_md"
+        android:paddingBottom="@dimen/space_md">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/size_icon_lg"
+                    android:layout_height="@dimen/size_icon_lg"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_spark" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_sm"
+                    android:text="Qwen 端侧 AI 助理"
+                    android:textColor="@color/hero_on"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_title" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvModelStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                android:drawableStart="@drawable/bg_status_dot"
+                android:drawablePadding="@dimen/space_sm"
+                android:gravity="center_vertical"
+                android:text="0.5B 本地离线引擎就绪 · 0流量消耗 · 100% 隐私安全"
+                android:textColor="@color/hero_on_muted"
+                android:textSize="@dimen/text_label_small" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnClearCurrent"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/height_chip"
+            android:minHeight="0dp"
+            android:drawableStart="@drawable/ic_trash"
+            android:drawablePadding="@dimen/space_xs"
+            android:gravity="center"
+            android:paddingStart="@dimen/space_md"
+            android:paddingEnd="@dimen/space_lg"
+            android:textSize="@dimen/text_label"
+            android:background="@drawable/bg_chip_pill_on_dark"
+            android:textColor="@color/hero_on_faint"
+            android:contentDescription="清空当前模块的本地记录"
+            android:text="清空" />
+    </LinearLayout>
+
+    <!-- ================= 六大功能导航（图标 + 文字胶囊） ================= -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:paddingStart="@dimen/space_sm"
+        android:paddingEnd="@dimen/space_sm"
+        android:paddingTop="@dimen/space_xs"
+        android:paddingBottom="@dimen/space_sm">
+
+        <LinearLayout
+            android:id="@+id/tabContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/tabBookkeeping"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_chip"
+                android:minHeight="0dp"
+                android:drawableStart="@drawable/ic_payments"
+                android:drawablePadding="@dimen/space_xs"
+                android:gravity="center"
+                android:textSize="@dimen/text_label"
+                android:textStyle="bold"
+                android:background="@drawable/bg_chip_pill_selected"
+                android:textColor="@color/on_primary"
+                android:text="智能记账"
+                android:paddingStart="@dimen/space_md"
+                android:paddingEnd="@dimen/space_lg"
+                android:layout_marginEnd="@dimen/space_xs" />
+
+            <Button
+                android:id="@+id/tabSchedule"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_chip"
+                android:minHeight="0dp"
+                android:drawableStart="@drawable/ic_alarm"
+                android:drawablePadding="@dimen/space_xs"
+                android:gravity="center"
+                android:textSize="@dimen/text_label"
+                android:background="@drawable/bg_chip_pill"
+                android:textColor="@color/on_surface_variant"
+                android:text="闹钟日程"
+                android:paddingStart="@dimen/space_md"
+                android:paddingEnd="@dimen/space_lg"
+                android:layout_marginEnd="@dimen/space_xs" />
+
+            <Button
+                android:id="@+id/tabDocument"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_chip"
+                android:minHeight="0dp"
+                android:drawableStart="@drawable/ic_doc"
+                android:drawablePadding="@dimen/space_xs"
+                android:gravity="center"
+                android:textSize="@dimen/text_label"
+                android:background="@drawable/bg_chip_pill"
+                android:textColor="@color/on_surface_variant"
+                android:text="合同速读"
+                android:paddingStart="@dimen/space_md"
+                android:paddingEnd="@dimen/space_lg"
+                android:layout_marginEnd="@dimen/space_xs" />
+
+            <Button
+                android:id="@+id/tabMeeting"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_chip"
+                android:minHeight="0dp"
+                android:drawableStart="@drawable/ic_group"
+                android:drawablePadding="@dimen/space_xs"
+                android:gravity="center"
+                android:textSize="@dimen/text_label"
+                android:background="@drawable/bg_chip_pill"
+                android:textColor="@color/on_surface_variant"
+                android:text="会议纪要"
+                android:paddingStart="@dimen/space_md"
+                android:paddingEnd="@dimen/space_lg"
+                android:layout_marginEnd="@dimen/space_xs" />
+
+            <Button
+                android:id="@+id/tabDiary"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_chip"
+                android:minHeight="0dp"
+                android:drawableStart="@drawable/ic_book"
+                android:drawablePadding="@dimen/space_xs"
+                android:gravity="center"
+                android:textSize="@dimen/text_label"
+                android:background="@drawable/bg_chip_pill"
+                android:textColor="@color/on_surface_variant"
+                android:text="私密日记"
+                android:paddingStart="@dimen/space_md"
+                android:paddingEnd="@dimen/space_lg"
+                android:layout_marginEnd="@dimen/space_xs" />
+
+            <Button
+                android:id="@+id/tabAntiFraud"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_chip"
+                android:minHeight="0dp"
+                android:drawableStart="@drawable/ic_shield"
+                android:drawablePadding="@dimen/space_xs"
+                android:gravity="center"
+                android:textSize="@dimen/text_label"
+                android:background="@drawable/bg_chip_pill"
+                android:textColor="@color/on_surface_variant"
+                android:text="反诈雷达"
+                android:paddingStart="@dimen/space_md"
+                android:paddingEnd="@dimen/space_lg" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- ================= 中间：六大页面工作区 ================= -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingStart="@dimen/space_sm"
+        android:paddingEnd="@dimen/space_sm"
+        android:paddingTop="@dimen/space_xs"
+        android:paddingBottom="@dimen/space_xs">
+
+        <!-- 页面 1：智能记账 -->
+        <LinearLayout
+            android:id="@+id/pageBookkeeping"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <!-- 资产仪表盘（Hero 深色玻璃卡） -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_card_gradient_dark"
+                android:padding="@dimen/space_lg"
+                android:layout_marginBottom="@dimen/space_sm">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="本地资产看板"
+                        android:textColor="@color/hero_on"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/text_label" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SQLite 实时落库 · 数据不出手机"
+                        android:textColor="@color/hero_on_muted"
+                        android:textSize="@dimen/text_label_small" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:gravity="center_vertical">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="总支出"
+                            android:textSize="@dimen/text_label_small"
+                            android:textColor="@color/hero_on_muted" />
+                        <TextView
+                            android:id="@+id/tvExpense"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="¥0.00"
+                            android:textSize="@dimen/text_stat"
+                            android:textStyle="bold"
+                            android:textColor="@color/stat_negative" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="总收入"
+                            android:textSize="@dimen/text_label_small"
+                            android:textColor="@color/hero_on_muted" />
+                        <TextView
+                            android:id="@+id/tvIncome"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="¥0.00"
+                            android:textSize="@dimen/text_stat"
+                            android:textStyle="bold"
+                            android:textColor="@color/stat_positive" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.2"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="结余（总计）"
+                            android:textSize="@dimen/text_label_small"
+                            android:textColor="@color/hero_on_muted" />
+                        <TextView
+                            android:id="@+id/tvBalance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="¥0.00 (0笔)"
+                            android:textSize="@dimen/text_title"
+                            android:textStyle="bold"
+                            android:textColor="@color/hero_on" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 账单流水（玻璃卡） -->
+            <ScrollView
+                android:id="@+id/scrollBookkeeping"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card_white"
+                android:padding="@dimen/card_padding">
+                <TextView
+                    android:id="@+id/logBookkeeping"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_log"
+                    android:textColor="@color/on_surface"
+                    android:lineSpacingExtra="@dimen/space_sm" />
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- 页面 2：闹钟日程 -->
+        <LinearLayout
+            android:id="@+id/pageSchedule"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card_tint_amber"
+                android:padding="@dimen/space_md"
+                android:layout_marginBottom="@dimen/space_sm"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:layout_width="@dimen/size_icon"
+                    android:layout_height="@dimen/size_icon"
+                    android:importantForAccessibility="no"
+                    android:layout_marginEnd="@dimen/space_md"
+                    android:src="@drawable/ic_calendar" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="系统级能力互联：识别到闹钟直接调起系统闹钟，识别到日程自动生成系统日历事件并持久化本地备忘。"
+                    android:textColor="@color/banner_amber_on"
+                    android:textSize="@dimen/text_label"
+                    android:lineSpacingExtra="@dimen/space_xs" />
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scrollSchedule"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card_white"
+                android:padding="@dimen/card_padding">
+                <TextView
+                    android:id="@+id/logSchedule"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_log"
+                    android:textColor="@color/on_surface"
+                    android:lineSpacingExtra="@dimen/space_sm" />
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- 页面 3：合同速读 -->
+        <LinearLayout
+            android:id="@+id/pageDocument"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="@dimen/space_sm">
+
+                <Button
+                    android:id="@+id/btnDocRent"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/height_chip"
+                    android:layout_weight="1"
+                    android:minHeight="0dp"
+                    android:drawableStart="@drawable/ic_home"
+                    android:drawablePadding="@dimen/space_xs"
+                    android:gravity="center"
+                    android:textSize="@dimen/text_label"
+                    android:background="@drawable/bg_chip_pill_selected"
+                    android:textColor="@color/on_primary"
+                    android:text="租房合同"
+                    android:layout_marginEnd="@dimen/space_xs" />
+
+                <Button
+                    android:id="@+id/btnDocDev"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/height_chip"
+                    android:layout_weight="1"
+                    android:minHeight="0dp"
+                    android:drawableStart="@drawable/ic_code"
+                    android:drawablePadding="@dimen/space_xs"
+                    android:gravity="center"
+                    android:textSize="@dimen/text_label"
+                    android:background="@drawable/bg_chip_pill"
+                    android:textColor="@color/on_surface_variant"
+                    android:text="开发协议"
+                    android:layout_marginEnd="@dimen/space_xs" />
+
+                <Button
+                    android:id="@+id/btnDocNda"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/height_chip"
+                    android:layout_weight="1"
+                    android:minHeight="0dp"
+                    android:drawableStart="@drawable/ic_lock"
+                    android:drawablePadding="@dimen/space_xs"
+                    android:gravity="center"
+                    android:textSize="@dimen/text_label"
+                    android:background="@drawable/bg_chip_pill"
+                    android:textColor="@color/on_surface_variant"
+                    android:text="保密协议" />
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scrollDocument"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card_white"
+                android:padding="@dimen/card_padding">
+                <TextView
+                    android:id="@+id/logDocument"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_log"
+                    android:textColor="@color/on_surface"
+                    android:lineSpacingExtra="@dimen/space_sm" />
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- 页面 4：会议纪要 -->
+        <LinearLayout
+            android:id="@+id/pageMeeting"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card_tint_blue"
+                android:padding="@dimen/space_md"
+                android:layout_marginBottom="@dimen/space_sm"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:layout_width="@dimen/size_icon"
+                    android:layout_height="@dimen/size_icon"
+                    android:importantForAccessibility="no"
+                    android:layout_marginEnd="@dimen/space_md"
+                    android:src="@drawable/ic_group_blue" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="输入或导入会议转写稿，Qwen 端侧自动提炼核心共识、Action Items 待办清单与风险关注点。"
+                    android:textColor="@color/banner_blue_on"
+                    android:textSize="@dimen/text_label"
+                    android:lineSpacingExtra="@dimen/space_xs" />
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scrollMeeting"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card_white"
+                android:padding="@dimen/card_padding">
+                <TextView
+                    android:id="@+id/logMeeting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_log"
+                    android:textColor="@color/on_surface"
+                    android:lineSpacingExtra="@dimen/space_sm" />
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- 页面 5：私密日记 -->
+        <LinearLayout
+            android:id="@+id/pageDiary"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_card_tint_purple"
+                android:padding="@dimen/space_md"
+                android:layout_marginBottom="@dimen/space_sm">
+
+                <ImageView
+                    android:layout_width="@dimen/size_icon"
+                    android:layout_height="@dimen/size_icon"
+                    android:importantForAccessibility="no"
+                    android:layout_marginEnd="@dimen/space_md"
+                    android:src="@drawable/ic_book_purple" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="今日情绪晴雨表："
+                    android:textSize="@dimen/text_label"
+                    android:textColor="@color/banner_purple_on" />
+
+                <TextView
+                    android:id="@+id/tvCurrentMood"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="积极充实"
+                    android:textSize="@dimen/text_log"
+                    android:textStyle="bold"
+                    android:textColor="@color/banner_purple_on"
+                    android:layout_marginStart="@dimen/space_xs" />
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scrollDiary"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card_white"
+                android:padding="@dimen/card_padding">
+                <TextView
+                    android:id="@+id/logDiary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_log"
+                    android:textColor="@color/on_surface"
+                    android:lineSpacingExtra="@dimen/space_sm" />
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- 页面 6：反诈雷达 -->
+        <LinearLayout
+            android:id="@+id/pageAntiFraud"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card_tint_rose"
+                android:padding="@dimen/space_md"
+                android:layout_marginBottom="@dimen/space_sm"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:layout_width="@dimen/size_icon"
+                    android:layout_height="@dimen/size_icon"
+                    android:importantForAccessibility="no"
+                    android:layout_marginEnd="@dimen/space_md"
+                    android:src="@drawable/ic_shield_rose" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="端侧离线反诈雷达：100% 本地深度分析诈骗短信话术，标红高危风险，短信数据绝不出手机。"
+                    android:textColor="@color/banner_rose_on"
+                    android:textSize="@dimen/text_label"
+                    android:lineSpacingExtra="@dimen/space_xs" />
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scrollAntiFraud"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card_white"
+                android:padding="@dimen/card_padding">
+                <TextView
+                    android:id="@+id/logAntiFraud"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_log"
+                    android:textColor="@color/on_surface"
+                    android:lineSpacingExtra="@dimen/space_sm" />
+            </ScrollView>
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- ================= 底部动态快捷 Chip 栏 ================= -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_marginTop="@dimen/space_xs"
+        android:layout_marginBottom="@dimen/space_sm"
+        android:paddingStart="@dimen/space_sm"
+        android:paddingEnd="@dimen/space_sm">
+
+        <LinearLayout
+            android:id="@+id/dynamicChipsContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <!-- ================= 底部输入栏 ================= -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/surface"
+        android:paddingStart="@dimen/space_sm"
+        android:paddingEnd="@dimen/space_sm"
+        android:paddingTop="@dimen/space_sm"
+        android:paddingBottom="@dimen/space_md"
+        android:elevation="@dimen/elevation_input_bar">
+
+        <Button
+            android:id="@+id/btnVoice"
+            android:layout_width="@dimen/height_button_primary"
+            android:layout_height="@dimen/height_button_primary"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:padding="0dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:background="@drawable/bg_btn_voice"
+            android:drawableStart="@drawable/ic_mic"
+            android:gravity="center"
+            android:contentDescription="端侧离线语音输入"
+            android:layout_marginEnd="@dimen/space_sm" />
+
+        <EditText
+            android:id="@+id/input"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/height_button_primary"
+            android:layout_weight="1"
+            android:hint="输入或说出指令..."
+            android:textSize="@dimen/text_button"
+            android:textColor="@color/on_surface"
+            android:textColorHint="@color/on_surface_faint"
+            android:background="@drawable/bg_input_floating"
+            android:paddingStart="@dimen/space_lg"
+            android:paddingEnd="@dimen/space_lg"
+            android:imeOptions="actionSend"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/send"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/height_button_primary"
+            android:minHeight="0dp"
+            android:drawableStart="@drawable/ic_send"
+            android:drawablePadding="@dimen/space_xs"
+            android:gravity="center"
+            android:background="@drawable/bg_btn_primary"
+            android:textColor="@color/on_primary"
+            android:text="发送"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_button"
+            android:paddingStart="@dimen/space_lg"
+            android:paddingEnd="@dimen/space_lg"
+            android:layout_marginStart="@dimen/space_sm" />
+    </LinearLayout>
+</LinearLayout>
