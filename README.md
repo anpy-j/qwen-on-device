@@ -1,6 +1,6 @@
-# Qwen 端侧 Demo（Android）
+# Qwen 端侧 AI 助理（Android）
 
-在 Android 平板/手机本地运行的端侧 AI 助理 Demo：大模型推理、离线语音识别全程不出设备，100% 隐私安全、0 流量消耗。
+在 Android 平板/手机本地运行的端侧 AI 助理：大模型推理、离线语音识别全程不出设备，100% 隐私安全、0 流量消耗。
 
 - 推理框架：MediaPipe LLM Inference（LiteRT / tasks-genai 0.10.23），无需 NDK 编译
 - 大模型：litert-community/Qwen2.5-0.5B-Instruct（q8 量化，521MB，峰值内存约 1.4GB）
@@ -24,7 +24,7 @@
 
 ```bash
 git lfs install
-git clone https://github.com/anpy-j/qwen-on-device-demo.git
+git clone https://github.com/anpy-j/qwen-on-device.git
 ```
 
 ## 构建
