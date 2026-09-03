@@ -9,5 +9,6 @@ app/release.jks
 .agent_context/
 .multica/
 .opencode/
+.agents/
 AGENTS.md
 description.md

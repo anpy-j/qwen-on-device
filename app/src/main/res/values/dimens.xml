@@ -38,4 +38,21 @@
 
     <!-- 底部输入栏抬升 -->
     <dimen name="elevation_input_bar">4dp</dimen>
+
+    <!-- 页面通用 -->
+    <dimen name="page_padding_h">16dp</dimen>
+    <dimen name="banner_margin_top">12dp</dimen>
+    <dimen name="banner_padding_h">14dp</dimen>
+    <dimen name="banner_padding_v">10dp</dimen>
+    <dimen name="banner_icon_box">36dp</dimen>
+    <dimen name="text_sm">13sp</dimen>
+    <dimen name="card_label">12sp</dimen>
+    <dimen name="btn_small">13sp</dimen>
+    <dimen name="btn_md">15sp</dimen>
+
+    <!-- 底部输入坞 -->
+    <dimen name="dock_chip_margin_v">10dp</dimen>
+    <dimen name="dock_input_margin_v">10dp</dimen>
+    <dimen name="dock_input_gap">8dp</dimen>
+    <dimen name="dock_voice_size">48dp</dimen>
 </resources>

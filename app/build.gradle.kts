@@ -62,8 +62,8 @@ dependencies {
     // 因 qemu 谎报 sme2 特性导致 SIGILL (mediapipe#6293)；0.10.23 无 SME2 内核，可用
     implementation("com.google.mediapipe:tasks-genai:0.10.23")
 
-    // Sherpa-ONNX 离线语音识别引擎
-    implementation("com.bihe0832.android:lib-sherpa-onnx:8.6.6")
+    // Sherpa-ONNX 离线语音识别 + 离线 TTS（官方 AAR 1.13.7，含 OfflineTts/Piper 支持）
+    implementation(files("libs/sherpa-onnx-1.13.7.aar"))
 
     // Material Design 3 主题与颜色体系
     implementation("com.google.android.material:material:1.12.0")

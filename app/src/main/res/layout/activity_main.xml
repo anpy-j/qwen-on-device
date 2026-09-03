@@ -1,696 +1,576 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  商业化重构版主界面（2026-09）
-  设计系统：design-system/qwenondevice/MASTER.md — Personal Finance Tracker · Glassmorphism
-  信任蓝 #1E40AF + 收益绿 #059669，深色 Hero 卡 + 玻璃卡片，全量矢量图标（禁用 emoji 图标）
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/background">
+    android:background="@color/bg_background"
+    android:orientation="vertical">
 
-    <!-- ================= 顶部 Hero：品牌 + 引擎状态 ================= -->
+    <!-- ===================== Hero 头部 ===================== -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_hero_gradient"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:background="@drawable/bg_card_gradient_dark"
-        android:layout_margin="@dimen/space_sm"
-        android:paddingStart="@dimen/space_lg"
-        android:paddingEnd="@dimen/space_lg"
-        android:paddingTop="@dimen/space_md"
-        android:paddingBottom="@dimen/space_md">
+        android:paddingStart="20dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="16dp">
+
+        <ImageView
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/hero_logo_bg"
+            android:padding="10dp"
+            android:src="@drawable/ic_group"
+            android:contentDescription="@null" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="14dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <ImageView
-                    android:layout_width="@dimen/size_icon_lg"
-                    android:layout_height="@dimen/size_icon_lg"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_spark" />
-
                 <TextView
+                    android:id="@+id/heroTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/space_sm"
-                    android:text="Qwen 端侧 AI 助理"
-                    android:textColor="@color/hero_on"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/text_title" />
+                    android:text="Qwen 英语学习"
+                    android:textColor="#FFFFFF"
+                    android:textSize="21sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/heroStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bg_chip_pill_on_dark"
+                    android:gravity="center"
+                    android:paddingStart="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="3dp"
+                    android:text="正在加载"
+                    android:textColor="#22C55E"
+                    android:textSize="11sp" />
             </LinearLayout>
 
             <TextView
-                android:id="@+id/tvModelStatus"
-                android:layout_width="wrap_content"
+                android:id="@+id/heroSubtitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_xs"
-                android:drawableStart="@drawable/bg_status_dot"
-                android:drawablePadding="@dimen/space_sm"
-                android:gravity="center_vertical"
-                android:text="0.5B 本地离线引擎就绪 · 0流量消耗 · 100% 隐私安全"
-                android:textColor="@color/hero_on_muted"
-                android:textSize="@dimen/text_label_small" />
+                android:layout_marginTop="3dp"
+                android:text="0.5B 本地模型 · 离线词典 / TTS 全程不出设备"
+                android:textColor="@color/text_subtle"
+                android:textSize="12sp" />
         </LinearLayout>
-
-        <Button
-            android:id="@+id/btnClearCurrent"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/height_chip"
-            android:minHeight="0dp"
-            android:drawableStart="@drawable/ic_trash"
-            android:drawablePadding="@dimen/space_xs"
-            android:gravity="center"
-            android:paddingStart="@dimen/space_md"
-            android:paddingEnd="@dimen/space_lg"
-            android:textSize="@dimen/text_label"
-            android:background="@drawable/bg_chip_pill_on_dark"
-            android:textColor="@color/hero_on_faint"
-            android:contentDescription="清空当前模块的本地记录"
-            android:text="清空" />
     </LinearLayout>
 
-    <!-- ================= 六大功能导航（图标 + 文字胶囊） ================= -->
-    <HorizontalScrollView
+    <!-- ===================== Tab 导航 ===================== -->
+    <LinearLayout
+        android:id="@+id/navContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:paddingStart="@dimen/space_sm"
-        android:paddingEnd="@dimen/space_sm"
-        android:paddingTop="@dimen/space_xs"
-        android:paddingBottom="@dimen/space_sm">
+        android:clipToPadding="false"
+        android:background="@color/bg_background"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="12dp" />
 
-        <LinearLayout
-            android:id="@+id/tabContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/tabBookkeeping"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/height_chip"
-                android:minHeight="0dp"
-                android:drawableStart="@drawable/ic_payments"
-                android:drawablePadding="@dimen/space_xs"
-                android:gravity="center"
-                android:textSize="@dimen/text_label"
-                android:textStyle="bold"
-                android:background="@drawable/bg_chip_pill_selected"
-                android:textColor="@color/on_primary"
-                android:text="智能记账"
-                android:paddingStart="@dimen/space_md"
-                android:paddingEnd="@dimen/space_lg"
-                android:layout_marginEnd="@dimen/space_xs" />
-
-            <Button
-                android:id="@+id/tabSchedule"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/height_chip"
-                android:minHeight="0dp"
-                android:drawableStart="@drawable/ic_alarm"
-                android:drawablePadding="@dimen/space_xs"
-                android:gravity="center"
-                android:textSize="@dimen/text_label"
-                android:background="@drawable/bg_chip_pill"
-                android:textColor="@color/on_surface_variant"
-                android:text="闹钟日程"
-                android:paddingStart="@dimen/space_md"
-                android:paddingEnd="@dimen/space_lg"
-                android:layout_marginEnd="@dimen/space_xs" />
-
-            <Button
-                android:id="@+id/tabDocument"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/height_chip"
-                android:minHeight="0dp"
-                android:drawableStart="@drawable/ic_doc"
-                android:drawablePadding="@dimen/space_xs"
-                android:gravity="center"
-                android:textSize="@dimen/text_label"
-                android:background="@drawable/bg_chip_pill"
-                android:textColor="@color/on_surface_variant"
-                android:text="合同速读"
-                android:paddingStart="@dimen/space_md"
-                android:paddingEnd="@dimen/space_lg"
-                android:layout_marginEnd="@dimen/space_xs" />
-
-            <Button
-                android:id="@+id/tabMeeting"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/height_chip"
-                android:minHeight="0dp"
-                android:drawableStart="@drawable/ic_group"
-                android:drawablePadding="@dimen/space_xs"
-                android:gravity="center"
-                android:textSize="@dimen/text_label"
-                android:background="@drawable/bg_chip_pill"
-                android:textColor="@color/on_surface_variant"
-                android:text="会议纪要"
-                android:paddingStart="@dimen/space_md"
-                android:paddingEnd="@dimen/space_lg"
-                android:layout_marginEnd="@dimen/space_xs" />
-
-            <Button
-                android:id="@+id/tabDiary"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/height_chip"
-                android:minHeight="0dp"
-                android:drawableStart="@drawable/ic_book"
-                android:drawablePadding="@dimen/space_xs"
-                android:gravity="center"
-                android:textSize="@dimen/text_label"
-                android:background="@drawable/bg_chip_pill"
-                android:textColor="@color/on_surface_variant"
-                android:text="私密日记"
-                android:paddingStart="@dimen/space_md"
-                android:paddingEnd="@dimen/space_lg"
-                android:layout_marginEnd="@dimen/space_xs" />
-
-            <Button
-                android:id="@+id/tabAntiFraud"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/height_chip"
-                android:minHeight="0dp"
-                android:drawableStart="@drawable/ic_shield"
-                android:drawablePadding="@dimen/space_xs"
-                android:gravity="center"
-                android:textSize="@dimen/text_label"
-                android:background="@drawable/bg_chip_pill"
-                android:textColor="@color/on_surface_variant"
-                android:text="反诈雷达"
-                android:paddingStart="@dimen/space_md"
-                android:paddingEnd="@dimen/space_lg" />
-        </LinearLayout>
-    </HorizontalScrollView>
-
-    <!-- ================= 中间：六大页面工作区 ================= -->
+    <!-- ===================== 页面容器 ===================== -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingStart="@dimen/space_sm"
-        android:paddingEnd="@dimen/space_sm"
-        android:paddingTop="@dimen/space_xs"
-        android:paddingBottom="@dimen/space_xs">
+        android:layout_weight="1">
 
-        <!-- 页面 1：智能记账 -->
+        <!-- ========== 词典页 ========== -->
         <LinearLayout
-            android:id="@+id/pageBookkeeping"
+            android:id="@+id/pageDict"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:paddingStart="@dimen/page_padding_h"
+            android:paddingEnd="@dimen/page_padding_h">
 
-            <!-- 资产仪表盘（Hero 深色玻璃卡） -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_card_gradient_dark"
-                android:padding="@dimen/space_lg"
-                android:layout_marginBottom="@dimen/space_sm">
+                android:layout_marginTop="@dimen/banner_margin_top"
+                android:background="@drawable/bg_card_tint_blue"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/banner_padding_h"
+                android:paddingTop="@dimen/banner_padding_v"
+                android:paddingEnd="@dimen/banner_padding_h"
+                android:paddingBottom="@dimen/banner_padding_v">
+
+                <ImageView
+                    android:layout_width="@dimen/banner_icon_box"
+                    android:layout_height="@dimen/banner_icon_box"
+                    android:background="@drawable/banner_icon_bg"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_doc"
+                    android:tint="#FFFFFF"
+                    android:contentDescription="@null" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:text="本地资产看板"
-                        android:textColor="@color/hero_on"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/text_label" />
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="SQLite 实时落库 · 数据不出手机"
-                        android:textColor="@color/hero_on_muted"
-                        android:textSize="@dimen/text_label_small" />
+                        android:text="离线词典"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="9733 高频词已内置 · 点词即查，发音全程离线"
+                        android:textColor="#E0F2FE"
+                        android:textSize="12sp" />
                 </LinearLayout>
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scrollDict"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true"
+                android:scrollbars="none">
 
                 <LinearLayout
+                    android:id="@+id/dictContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="@dimen/space_sm"
-                    android:gravity="center_vertical">
+                    android:orientation="vertical"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="8dp" />
+            </ScrollView>
+        </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="总支出"
-                            android:textSize="@dimen/text_label_small"
-                            android:textColor="@color/hero_on_muted" />
-                        <TextView
-                            android:id="@+id/tvExpense"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="¥0.00"
-                            android:textSize="@dimen/text_stat"
-                            android:textStyle="bold"
-                            android:textColor="@color/stat_negative" />
-                    </LinearLayout>
+        <!-- ========== 口语陪练页 ========== -->
+        <LinearLayout
+            android:id="@+id/pageChat"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/page_padding_h"
+            android:paddingEnd="@dimen/page_padding_h"
+            android:visibility="gone">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="总收入"
-                            android:textSize="@dimen/text_label_small"
-                            android:textColor="@color/hero_on_muted" />
-                        <TextView
-                            android:id="@+id/tvIncome"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="¥0.00"
-                            android:textSize="@dimen/text_stat"
-                            android:textStyle="bold"
-                            android:textColor="@color/stat_positive" />
-                    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/banner_margin_top"
+                android:background="@drawable/bg_card_tint_emerald"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/banner_padding_h"
+                android:paddingTop="@dimen/banner_padding_v"
+                android:paddingEnd="@dimen/banner_padding_h"
+                android:paddingBottom="@dimen/banner_padding_v">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
+                <ImageView
+                    android:layout_width="@dimen/banner_icon_box"
+                    android:layout_height="@dimen/banner_icon_box"
+                    android:background="@drawable/banner_icon_bg"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_group"
+                    android:tint="#FFFFFF"
+                    android:contentDescription="@null" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1.2"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="结余（总计）"
-                            android:textSize="@dimen/text_label_small"
-                            android:textColor="@color/hero_on_muted" />
-                        <TextView
-                            android:id="@+id/tvBalance"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="¥0.00 (0笔)"
-                            android:textSize="@dimen/text_title"
-                            android:textStyle="bold"
-                            android:textColor="@color/hero_on" />
-                    </LinearLayout>
+                        android:text="AI 口语陪练"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="本地模型扮演母语伙伴，说错自动纠正并朗读"
+                        android:textColor="#D1FAE5"
+                        android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- 账单流水（玻璃卡） -->
             <ScrollView
-                android:id="@+id/scrollBookkeeping"
+                android:id="@+id/scrollChat"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_card_white"
-                android:padding="@dimen/card_padding">
-                <TextView
-                    android:id="@+id/logBookkeeping"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/chatContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_log"
-                    android:textColor="@color/on_surface"
-                    android:lineSpacingExtra="@dimen/space_sm" />
+                    android:orientation="vertical"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="8dp" />
             </ScrollView>
         </LinearLayout>
 
-        <!-- 页面 2：闹钟日程 -->
+        <!-- ========== 句子纠错页 ========== -->
         <LinearLayout
-            android:id="@+id/pageSchedule"
+            android:id="@+id/pageFix"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:paddingStart="@dimen/page_padding_h"
+            android:paddingEnd="@dimen/page_padding_h"
             android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/banner_margin_top"
                 android:background="@drawable/bg_card_tint_amber"
-                android:padding="@dimen/space_md"
-                android:layout_marginBottom="@dimen/space_sm"
-                android:gravity="center_vertical">
-                <ImageView
-                    android:layout_width="@dimen/size_icon"
-                    android:layout_height="@dimen/size_icon"
-                    android:importantForAccessibility="no"
-                    android:layout_marginEnd="@dimen/space_md"
-                    android:src="@drawable/ic_calendar" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="系统级能力互联：识别到闹钟直接调起系统闹钟，识别到日程自动生成系统日历事件并持久化本地备忘。"
-                    android:textColor="@color/banner_amber_on"
-                    android:textSize="@dimen/text_label"
-                    android:lineSpacingExtra="@dimen/space_xs" />
-            </LinearLayout>
-
-            <ScrollView
-                android:id="@+id/scrollSchedule"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_card_white"
-                android:padding="@dimen/card_padding">
-                <TextView
-                    android:id="@+id/logSchedule"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_log"
-                    android:textColor="@color/on_surface"
-                    android:lineSpacingExtra="@dimen/space_sm" />
-            </ScrollView>
-        </LinearLayout>
-
-        <!-- 页面 3：合同速读 -->
-        <LinearLayout
-            android:id="@+id/pageDocument"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="@dimen/space_sm">
-
-                <Button
-                    android:id="@+id/btnDocRent"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/height_chip"
-                    android:layout_weight="1"
-                    android:minHeight="0dp"
-                    android:drawableStart="@drawable/ic_home"
-                    android:drawablePadding="@dimen/space_xs"
-                    android:gravity="center"
-                    android:textSize="@dimen/text_label"
-                    android:background="@drawable/bg_chip_pill_selected"
-                    android:textColor="@color/on_primary"
-                    android:text="租房合同"
-                    android:layout_marginEnd="@dimen/space_xs" />
-
-                <Button
-                    android:id="@+id/btnDocDev"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/height_chip"
-                    android:layout_weight="1"
-                    android:minHeight="0dp"
-                    android:drawableStart="@drawable/ic_code"
-                    android:drawablePadding="@dimen/space_xs"
-                    android:gravity="center"
-                    android:textSize="@dimen/text_label"
-                    android:background="@drawable/bg_chip_pill"
-                    android:textColor="@color/on_surface_variant"
-                    android:text="开发协议"
-                    android:layout_marginEnd="@dimen/space_xs" />
-
-                <Button
-                    android:id="@+id/btnDocNda"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/height_chip"
-                    android:layout_weight="1"
-                    android:minHeight="0dp"
-                    android:drawableStart="@drawable/ic_lock"
-                    android:drawablePadding="@dimen/space_xs"
-                    android:gravity="center"
-                    android:textSize="@dimen/text_label"
-                    android:background="@drawable/bg_chip_pill"
-                    android:textColor="@color/on_surface_variant"
-                    android:text="保密协议" />
-            </LinearLayout>
-
-            <ScrollView
-                android:id="@+id/scrollDocument"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_card_white"
-                android:padding="@dimen/card_padding">
-                <TextView
-                    android:id="@+id/logDocument"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_log"
-                    android:textColor="@color/on_surface"
-                    android:lineSpacingExtra="@dimen/space_sm" />
-            </ScrollView>
-        </LinearLayout>
-
-        <!-- 页面 4：会议纪要 -->
-        <LinearLayout
-            android:id="@+id/pageMeeting"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_card_tint_blue"
-                android:padding="@dimen/space_md"
-                android:layout_marginBottom="@dimen/space_sm"
-                android:gravity="center_vertical">
-                <ImageView
-                    android:layout_width="@dimen/size_icon"
-                    android:layout_height="@dimen/size_icon"
-                    android:importantForAccessibility="no"
-                    android:layout_marginEnd="@dimen/space_md"
-                    android:src="@drawable/ic_group_blue" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="输入或导入会议转写稿，Qwen 端侧自动提炼核心共识、Action Items 待办清单与风险关注点。"
-                    android:textColor="@color/banner_blue_on"
-                    android:textSize="@dimen/text_label"
-                    android:lineSpacingExtra="@dimen/space_xs" />
-            </LinearLayout>
-
-            <ScrollView
-                android:id="@+id/scrollMeeting"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_card_white"
-                android:padding="@dimen/card_padding">
-                <TextView
-                    android:id="@+id/logMeeting"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_log"
-                    android:textColor="@color/on_surface"
-                    android:lineSpacingExtra="@dimen/space_sm" />
-            </ScrollView>
-        </LinearLayout>
-
-        <!-- 页面 5：私密日记 -->
-        <LinearLayout
-            android:id="@+id/pageDiary"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:background="@drawable/bg_card_tint_purple"
-                android:padding="@dimen/space_md"
-                android:layout_marginBottom="@dimen/space_sm">
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/banner_padding_h"
+                android:paddingTop="@dimen/banner_padding_v"
+                android:paddingEnd="@dimen/banner_padding_h"
+                android:paddingBottom="@dimen/banner_padding_v">
 
                 <ImageView
-                    android:layout_width="@dimen/size_icon"
-                    android:layout_height="@dimen/size_icon"
-                    android:importantForAccessibility="no"
-                    android:layout_marginEnd="@dimen/space_md"
-                    android:src="@drawable/ic_book_purple" />
+                    android:layout_width="@dimen/banner_icon_box"
+                    android:layout_height="@dimen/banner_icon_box"
+                    android:background="@drawable/banner_icon_bg"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_code"
+                    android:tint="#FFFFFF"
+                    android:contentDescription="@null" />
 
-                <TextView
+                <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="今日情绪晴雨表："
-                    android:textSize="@dimen/text_label"
-                    android:textColor="@color/banner_purple_on" />
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="句子纠错"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="英文原句或中文意图都可输入，改完自动朗读"
+                        android:textColor="#FEF3C7"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scrollFix"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true"
+                android:scrollbars="none">
 
                 <TextView
-                    android:id="@+id/tvCurrentMood"
+                    android:id="@+id/logFix"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:padding="14dp"
+                    android:lineSpacingExtra="3dp"
+                    android:text="在这里粘贴或输入你的句子（英文原句，或想表达的中文），我会逐条改写并讲解。"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_sm" />
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- ========== 单词本页 ========== -->
+        <LinearLayout
+            android:id="@+id/pageWords"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/page_padding_h"
+            android:paddingEnd="@dimen/page_padding_h"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/banner_margin_top"
+                android:background="@drawable/bg_card_tint_purple"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/banner_padding_h"
+                android:paddingTop="@dimen/banner_padding_v"
+                android:paddingEnd="@dimen/banner_padding_h"
+                android:paddingBottom="@dimen/banner_padding_v">
+
+                <ImageView
+                    android:layout_width="@dimen/banner_icon_box"
+                    android:layout_height="@dimen/banner_icon_box"
+                    android:background="@drawable/banner_icon_bg"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_book"
+                    android:tint="#FFFFFF"
+                    android:contentDescription="@null" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="单词本"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="间隔重复记忆：查词可加入，到期逐词复习"
+                        android:textColor="#EDE9FE"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp">
+
+                <TextView
+                    android:id="@+id/tvWordsStat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="共 0 个单词 · 0 个待复习"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/card_label"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/btnWordsClear"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="积极充实"
-                    android:textSize="@dimen/text_log"
-                    android:textStyle="bold"
-                    android:textColor="@color/banner_purple_on"
-                    android:layout_marginStart="@dimen/space_xs" />
+                    android:background="@color/btn_accent"
+                    android:gravity="center"
+                    android:paddingStart="14dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="14dp"
+                    android:paddingBottom="6dp"
+                    android:text="清空"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/btn_small" />
             </LinearLayout>
 
             <ScrollView
-                android:id="@+id/scrollDiary"
+                android:id="@+id/scrollWords"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_card_white"
-                android:padding="@dimen/card_padding">
-                <TextView
-                    android:id="@+id/logDiary"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/wordsContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_log"
-                    android:textColor="@color/on_surface"
-                    android:lineSpacingExtra="@dimen/space_sm" />
+                    android:orientation="vertical"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="8dp" />
             </ScrollView>
         </LinearLayout>
 
-        <!-- 页面 6：反诈雷达 -->
+        <!-- ========== 跟读听力页 ========== -->
         <LinearLayout
-            android:id="@+id/pageAntiFraud"
+            android:id="@+id/pageShadow"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:paddingStart="@dimen/page_padding_h"
+            android:paddingEnd="@dimen/page_padding_h"
             android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/banner_margin_top"
                 android:background="@drawable/bg_card_tint_rose"
-                android:padding="@dimen/space_md"
-                android:layout_marginBottom="@dimen/space_sm"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/banner_padding_h"
+                android:paddingTop="@dimen/banner_padding_v"
+                android:paddingEnd="@dimen/banner_padding_h"
+                android:paddingBottom="@dimen/banner_padding_v">
+
                 <ImageView
-                    android:layout_width="@dimen/size_icon"
-                    android:layout_height="@dimen/size_icon"
-                    android:importantForAccessibility="no"
-                    android:layout_marginEnd="@dimen/space_md"
-                    android:src="@drawable/ic_shield_rose" />
-                <TextView
+                    android:layout_width="@dimen/banner_icon_box"
+                    android:layout_height="@dimen/banner_icon_box"
+                    android:background="@drawable/banner_icon_bg"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_mic"
+                    android:tint="#FFFFFF"
+                    android:contentDescription="@null" />
+
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
                     android:layout_weight="1"
-                    android:text="端侧离线反诈雷达：100% 本地深度分析诈骗短信话术，标红高危风险，短信数据绝不出手机。"
-                    android:textColor="@color/banner_rose_on"
-                    android:textSize="@dimen/text_label"
-                    android:lineSpacingExtra="@dimen/space_xs" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="跟读听力"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="端侧 TTS 示范发音，离线识别后逐词高亮差距"
+                        android:textColor="#FFE4E6"
+                        android:textSize="12sp" />
+                </LinearLayout>
             </LinearLayout>
 
             <ScrollView
-                android:id="@+id/scrollAntiFraud"
+                android:id="@+id/scrollShadow"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_card_white"
-                android:padding="@dimen/card_padding">
-                <TextView
-                    android:id="@+id/logAntiFraud"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/shadowContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_log"
-                    android:textColor="@color/on_surface"
-                    android:lineSpacingExtra="@dimen/space_sm" />
+                    android:orientation="vertical"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="8dp" />
             </ScrollView>
         </LinearLayout>
     </FrameLayout>
 
-    <!-- ================= 底部动态快捷 Chip 栏 ================= -->
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:layout_marginTop="@dimen/space_xs"
-        android:layout_marginBottom="@dimen/space_sm"
-        android:paddingStart="@dimen/space_sm"
-        android:paddingEnd="@dimen/space_sm">
-
-        <LinearLayout
-            android:id="@+id/dynamicChipsContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" />
-    </HorizontalScrollView>
-
-    <!-- ================= 底部输入栏 ================= -->
+    <!-- ===================== 底部输入 ===================== -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:background="@color/surface"
-        android:paddingStart="@dimen/space_sm"
-        android:paddingEnd="@dimen/space_sm"
-        android:paddingTop="@dimen/space_sm"
-        android:paddingBottom="@dimen/space_md"
-        android:elevation="@dimen/elevation_input_bar">
+        android:background="@color/bg_background"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="10dp">
 
-        <Button
-            android:id="@+id/btnVoice"
-            android:layout_width="@dimen/height_button_primary"
-            android:layout_height="@dimen/height_button_primary"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
-            android:padding="0dp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:background="@drawable/bg_btn_voice"
-            android:drawableStart="@drawable/ic_mic"
-            android:gravity="center"
-            android:contentDescription="端侧离线语音输入"
-            android:layout_marginEnd="@dimen/space_sm" />
+        <HorizontalScrollView
+            android:id="@+id/actionChipScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dock_chip_margin_v"
+            android:paddingBottom="@dimen/dock_chip_margin_v"
+            android:scrollbars="none">
 
-        <EditText
-            android:id="@+id/input"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/height_button_primary"
-            android:layout_weight="1"
-            android:hint="输入或说出指令..."
-            android:textSize="@dimen/text_button"
-            android:textColor="@color/on_surface"
-            android:textColorHint="@color/on_surface_faint"
-            android:background="@drawable/bg_input_floating"
-            android:paddingStart="@dimen/space_lg"
-            android:paddingEnd="@dimen/space_lg"
-            android:imeOptions="actionSend"
-            android:inputType="text" />
+            <LinearLayout
+                android:id="@+id/actionChipContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
 
-        <Button
-            android:id="@+id/send"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/height_button_primary"
-            android:minHeight="0dp"
-            android:drawableStart="@drawable/ic_send"
-            android:drawablePadding="@dimen/space_xs"
-            android:gravity="center"
-            android:background="@drawable/bg_btn_primary"
-            android:textColor="@color/on_primary"
-            android:text="发送"
-            android:textStyle="bold"
-            android:textSize="@dimen/text_button"
-            android:paddingStart="@dimen/space_lg"
-            android:paddingEnd="@dimen/space_lg"
-            android:layout_marginStart="@dimen/space_sm" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dock_input_margin_v"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/inputText"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_floating"
+                android:hint="输入内容后发送"
+                android:imeOptions="actionSend"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="16dp"
+                android:paddingEnd="12dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint"
+                android:textSize="@dimen/text_sm" />
+
+            <Button
+                android:id="@+id/btnSend"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginStart="@dimen/dock_input_gap"
+                android:background="@drawable/bg_btn_primary"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:text="发送"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/btn_md"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btnVoice"
+                android:layout_width="@dimen/dock_voice_size"
+                android:layout_height="@dimen/dock_voice_size"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/bg_btn_voice"
+                android:contentDescription="@string/voice_desc"
+                android:scaleType="center" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
