@@ -631,7 +631,13 @@ example_en 是包含该单词的 B1 简单英文例句，example_cn 是对应的
             if (notInDict) "本地词库未收录，AI 正在现场解释…" else "AI 正在现场解释…",
             12, FAINT, topMargin = 6
         ))
-        llmAsk(DICT_AI_SYSTEM, word.lowercase()) { result ->
+        val localEntry = Dictionary.lookup(word)
+        val promptUser = if (localEntry != null) {
+            "单词：${localEntry.word}，参考音标：${localEntry.phonetic}，基本释义：${localEntry.translation}"
+        } else {
+            word.lowercase()
+        }
+        llmAsk(DICT_AI_SYSTEM, promptUser) { result ->
             val parsed = parseDictJson(result)
             mainHandler.post {
                 if (isFinishing || isDestroyed) return@post
@@ -641,7 +647,7 @@ example_en 是包含该单词的 B1 简单英文例句，example_cn 是对应的
                     !parsed.word.equals(word, ignoreCase = true) &&
                     !word.startsWith(parsed.word, ignoreCase = true) &&
                     !parsed.word.startsWith(word, ignoreCase = true)
-                if (parsed == null || parsed.cn.isEmpty() || wordMismatch) {
+                if (parsed == null || (parsed.cn.isEmpty() && localEntry == null) || wordMismatch) {
                     if (!llmReady) {
                         // requireLlm 已 toast 加载提示，这里把卡片占位改为等待提示
                         (card.getChildAt(1) as? TextView)?.text = "本地 AI 引擎加载中，请稍后重试…"
@@ -653,19 +659,32 @@ example_en 是包含该单词的 B1 简单英文例句，example_cn 是对应的
                         lookupByAi(word, notInDict, seq, attempt = 1)
                         return@post
                     }
+                    if (localEntry != null) {
+                        // 降级展示本地词库条目
+                        dictContainer.removeAllViews()
+                        dictContainer.addView(buildDictCard(localEntry))
+                        return@post
+                    }
                     toast("AI 解释失败，请换词再试")
                     return@post
+                }
+                val resolvedIpa = Dictionary.cleanPhonetic(parsed.ipa).ifEmpty {
+                    localEntry?.phonetic ?: ""
+                }
+                val resolvedCn = if (parsed.cn.isEmpty() || parsed.cn.contains("失望") || parsed.cn.contains("遗憾")) {
+                    localEntry?.translation ?: parsed.cn
+                } else {
+                    parsed.cn
                 }
                 dictContainer.removeAllViews()
                 dictContainer.addView(buildDictCard(
                     Dictionary.Entry(
-                        // 标题与例句缓存键一律用查询词，防止模型回填示例词
                         word = word.lowercase(),
-                        phonetic = parsed.ipa,
-                        definition = parsed.def,
-                        translation = parsed.cn,
-                        inflection = parsed.inf,
-                        tag = "AI 现场解释",
+                        phonetic = resolvedIpa,
+                        definition = parsed.def.ifEmpty { localEntry?.definition ?: "" },
+                        translation = resolvedCn,
+                        inflection = parsed.inf.ifEmpty { localEntry?.inflection ?: "" },
+                        tag = if (localEntry != null) "AI 深度解释" else "AI 现场解释",
                         source = "ai"
                     )
                 ))
@@ -677,7 +696,7 @@ example_en 是包含该单词的 B1 简单英文例句，example_cn 是对应的
         "输入或点下方示例查询单词，也可以直接点麦克风用语音查。当前为 AI 模型模式，每个词都由本地 AI 逐词解释。"
     } else {
         "输入或点下方示例查询单词，也可以直接点麦克风用语音查。" +
-            "内置 9733 个高频词；查不到的词会由本地 AI 现场解释。"
+            "内置 9735 个高频词；查不到的词会由本地 AI 现场解释。"
     }
 
     @SuppressLint("SetTextI18n")
@@ -689,8 +708,9 @@ example_en 是包含该单词的 B1 简单英文例句，example_cn 是对应的
             gravity = Gravity.CENTER_VERTICAL
         }
         headRow.addView(textView(entry.word, 20, INK, bold = true))
-        if (entry.phonetic.isNotEmpty()) {
-            headRow.addView(textView("/${entry.phonetic}/", 13, MUTED).apply {
+        val cleanIpa = Dictionary.cleanPhonetic(entry.phonetic)
+        if (cleanIpa.isNotEmpty()) {
+            headRow.addView(textView("/$cleanIpa/", 13, MUTED).apply {
                 (layoutParams as LinearLayout.LayoutParams).marginStart = dp(8)
             })
         }
@@ -699,7 +719,7 @@ example_en 是包含该单词的 B1 简单英文例句，example_cn 是对应的
         })
         headRow.addView(smallPill("▶ 发音") { ttsSpeak(entry.word) })
         headRow.addView(smallPill("＋单词本") {
-            db.upsertWord(entry.word, entry.phonetic, firstLine(entry.translation))
+            db.upsertWord(entry.word, cleanIpa, firstLine(entry.translation))
             toast("已加入单词本：${entry.word}")
         })
         card.addView(headRow)

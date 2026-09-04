@@ -22,6 +22,29 @@ object Dictionary {
     var loadedCount: Int = 0
         private set
 
+    fun cleanPhonetic(raw: String): String {
+        if (raw.isBlank()) return ""
+        var p = raw.trim().trim('/', '\'', '"', ' ')
+        // 修复早期词库中历史遗留的西里尔/特殊字符，对齐标准国际音标 (IPA)
+        p = p.replace('\u04d9', 'ə') // Cyrillic schwa -> IPA schwa
+            .replace('\u0454', 'e')
+            .replace('\u03b5', 'ɛ')
+            .replace(':', 'ː')
+            .replace(Regex("'([a-zA-Zʃʒθðŋʌæɑɔəɪʊɛ])"), "ˈ$1")
+            .replace(Regex("\\.([a-zA-Zʃʒθðŋʌæɑɔəɪʊɛ])"), "ˌ$1")
+            .replace("'", "ˈ")
+            .replace("ai", "aɪ")
+            .replace("ei", "eɪ")
+            .replace("au", "aʊ")
+            .replace("әu", "əʊ")
+            .replace("əu", "əʊ")
+            .replace("ɔi", "ɔɪ")
+            .replace("iə", "ɪə")
+            .replace("eə", "eə")
+            .replace("uə", "ʊə")
+        return p
+    }
+
     fun load(context: Context, onDone: (Int) -> Unit) {
         if (index != null) {
             onDone(loadedCount)
@@ -37,7 +60,7 @@ object Dictionary {
                         val word = obj.optString("w")
                         map[word.lowercase()] = Entry(
                             word = word,
-                            phonetic = obj.optString("p"),
+                            phonetic = cleanPhonetic(obj.optString("p")),
                             definition = obj.optString("d"),
                             translation = obj.optString("t"),
                             inflection = obj.optString("inf"),
@@ -61,7 +84,9 @@ object Dictionary {
     fun lookup(word: String): Entry? {
         val idx = index ?: return null
         val base = word.trim().lowercase()
-        return idx[base] ?: idx[base.trimEnd('s')]
+        return idx[base]
+            ?: idx[base.trimEnd('s')]
+            ?: if (base.endsWith("es")) idx[base.removeSuffix("es")] else null
     }
 
     fun isLoaded(): Boolean = index != null
