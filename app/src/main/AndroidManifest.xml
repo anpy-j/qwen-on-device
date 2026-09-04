@@ -8,6 +8,12 @@
         android:theme="@style/Theme.QwenOnDevice"
         android:allowBackup="false">
         <activity
+            android:name=".EnglishActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ModuleActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

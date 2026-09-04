@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Qwen英语学习</string>
+    <string name="app_name">Qwen端侧助手</string>
     <string name="voice_desc">语音输入</string>
 </resources>

@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_background"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/btnBackHome"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_hero_gradient"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:text="‹  返回首页"
+        android:textColor="@color/hero_on_faint"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <!-- ===================== Hero 头部 ===================== -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_hero_gradient"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="16dp">
+
+        <ImageView
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/hero_logo_bg"
+            android:padding="10dp"
+            android:src="@drawable/ic_group"
+            android:contentDescription="@null" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/heroTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Qwen 英语学习"
+                    android:textColor="#FFFFFF"
+                    android:textSize="21sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/heroStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bg_chip_pill_on_dark"
+                    android:gravity="center"
+                    android:paddingStart="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="3dp"
+                    android:text="正在加载"
+                    android:textColor="#22C55E"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/heroSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="0.5B 本地模型 · 离线词典 / TTS 全程不出设备"
+                android:textColor="@color/text_subtle"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/ttsSpeedPill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_chip_pill_on_dark"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:paddingStart="12dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="5dp"
+            android:text="语速 1.0×"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <!-- ===================== Tab 导航 ===================== -->
+    <LinearLayout
+        android:id="@+id/navContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:background="@color/bg_background"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="12dp" />
+
+    <!-- ===================== 页面容器 ===================== -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- ========== 词典页 ========== -->
+        <LinearLayout
+            android:id="@+id/pageDict"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/page_padding_h"
+            android:paddingEnd="@dimen/page_padding_h">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/banner_margin_top"
+                android:background="@drawable/bg_card_tint_blue"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/banner_padding_h"
+                android:paddingTop="@dimen/banner_padding_v"
+                android:paddingEnd="@dimen/banner_padding_h"
+                android:paddingBottom="@dimen/banner_padding_v">
+
+                <ImageView
+                    android:layout_width="@dimen/banner_icon_box"
+                    android:layout_height="@dimen/banner_icon_box"
+                    android:background="@drawable/banner_icon_bg"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_doc"
+                    app:tint="#FFFFFF"
+                    android:contentDescription="@null" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="离线词典"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvDictBannerSub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="9733 高频词已内置 · 点词即查，发音全程离线"
+                        android:textColor="#E0F2FE"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="查词方式"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/dictModeBundled"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bg_chip_pill_selected"
+                    android:gravity="center"
+                    android:paddingStart="16dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="5dp"
+                    android:text="内置词典"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/dictModeModel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_chip_pill"
+                    android:gravity="center"
+                    android:paddingStart="16dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="5dp"
+                    android:text="AI 模型"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scrollDict"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/dictContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="8dp" />
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- ========== 口语陪练页 ========== -->
+        <LinearLayout
+            android:id="@+id/pageChat"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/page_padding_h"
+            android:paddingEnd="@dimen/page_padding_h"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/banner_margin_top"
+                android:background="@drawable/bg_card_tint_emerald"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/banner_padding_h"
+                android:paddingTop="@dimen/banner_padding_v"
+                android:paddingEnd="@dimen/banner_padding_h"
+                android:paddingBottom="@dimen/banner_padding_v">
+
+                <ImageView
+                    android:layout_width="@dimen/banner_icon_box"
+                    android:layout_height="@dimen/banner_icon_box"
+                    android:background="@drawable/banner_icon_bg"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_group"
+                    app:tint="#FFFFFF"
+                    android:contentDescription="@null" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="AI 口语陪练"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="本地模型扮演母语伙伴，说错自动纠正并朗读"
+                        android:textColor="#D1FAE5"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scrollChat"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/chatContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="8dp" />
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- ========== 句子纠错页 ========== -->
+        <LinearLayout
+            android:id="@+id/pageFix"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/page_padding_h"
+            android:paddingEnd="@dimen/page_padding_h"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/banner_margin_top"
+                android:background="@drawable/bg_card_tint_amber"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/banner_padding_h"
+                android:paddingTop="@dimen/banner_padding_v"
+                android:paddingEnd="@dimen/banner_padding_h"
+                android:paddingBottom="@dimen/banner_padding_v">
+
+                <ImageView
+                    android:layout_width="@dimen/banner_icon_box"
+                    android:layout_height="@dimen/banner_icon_box"
+                    android:background="@drawable/banner_icon_bg"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_code"
+                    app:tint="#FFFFFF"
+                    android:contentDescription="@null" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="句子纠错"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="英文原句或中文意图都可输入，改完自动朗读"
+                        android:textColor="#FEF3C7"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scrollFix"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <TextView
+                    android:id="@+id/logFix"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:padding="14dp"
+                    android:lineSpacingExtra="3dp"
+                    android:text="在这里粘贴或输入你的句子（英文原句，或想表达的中文），我会逐条改写并讲解。"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_sm" />
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- ========== 单词本页 ========== -->
+        <LinearLayout
+            android:id="@+id/pageWords"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/page_padding_h"
+            android:paddingEnd="@dimen/page_padding_h"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/banner_margin_top"
+                android:background="@drawable/bg_card_tint_purple"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/banner_padding_h"
+                android:paddingTop="@dimen/banner_padding_v"
+                android:paddingEnd="@dimen/banner_padding_h"
+                android:paddingBottom="@dimen/banner_padding_v">
+
+                <ImageView
+                    android:layout_width="@dimen/banner_icon_box"
+                    android:layout_height="@dimen/banner_icon_box"
+                    android:background="@drawable/banner_icon_bg"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_book"
+                    app:tint="#FFFFFF"
+                    android:contentDescription="@null" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="单词本"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="间隔重复记忆：查词可加入，到期逐词复习"
+                        android:textColor="#EDE9FE"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp">
+
+                <TextView
+                    android:id="@+id/tvWordsStat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="共 0 个单词 · 0 个待复习"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/card_label"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/btnWordsClear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/btn_accent"
+                    android:gravity="center"
+                    android:paddingStart="14dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="14dp"
+                    android:paddingBottom="6dp"
+                    android:text="清空"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/btn_small" />
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scrollWords"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/wordsContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="8dp" />
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- ========== 跟读听力页 ========== -->
+        <LinearLayout
+            android:id="@+id/pageShadow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/page_padding_h"
+            android:paddingEnd="@dimen/page_padding_h"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/banner_margin_top"
+                android:background="@drawable/bg_card_tint_rose"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/banner_padding_h"
+                android:paddingTop="@dimen/banner_padding_v"
+                android:paddingEnd="@dimen/banner_padding_h"
+                android:paddingBottom="@dimen/banner_padding_v">
+
+                <ImageView
+                    android:layout_width="@dimen/banner_icon_box"
+                    android:layout_height="@dimen/banner_icon_box"
+                    android:background="@drawable/banner_icon_bg"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_mic"
+                    app:tint="#FFFFFF"
+                    android:contentDescription="@null" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="跟读听力"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="端侧 TTS 示范发音，离线识别后逐词高亮差距"
+                        android:textColor="#FFE4E6"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scrollShadow"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/shadowContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="8dp" />
+            </ScrollView>
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- ===================== 底部输入 ===================== -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_background"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="10dp">
+
+        <HorizontalScrollView
+            android:id="@+id/actionChipScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dock_chip_margin_v"
+            android:paddingBottom="@dimen/dock_chip_margin_v"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/actionChipContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dock_input_margin_v"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/inputText"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_floating"
+                android:hint="输入内容后发送"
+                android:imeOptions="actionSend"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="16dp"
+                android:paddingEnd="12dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint"
+                android:textSize="@dimen/text_sm" />
+
+            <Button
+                android:id="@+id/btnSend"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginStart="@dimen/dock_input_gap"
+                android:background="@drawable/bg_btn_primary"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:text="发送"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/btn_md"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btnVoice"
+                android:layout_width="@dimen/dock_voice_size"
+                android:layout_height="@dimen/dock_voice_size"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/bg_btn_voice"
+                android:contentDescription="@string/voice_desc"
+                android:scaleType="center" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

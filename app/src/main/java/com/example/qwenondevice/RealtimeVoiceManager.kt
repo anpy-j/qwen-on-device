@@ -1,11 +1,14 @@
 package com.example.qwenondevice
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Handler
 import android.os.Looper
+import androidx.core.content.ContextCompat
 import com.k2fsa.sherpa.onnx.OnlineRecognizer
 import com.k2fsa.sherpa.onnx.OnlineRecognizerConfig
 import com.k2fsa.sherpa.onnx.OnlineStream
@@ -107,6 +110,12 @@ class RealtimeVoiceManager(private val context: Context) {
      * 静音判停或显式调用 stopListening() 后，完整识别结果通过 onFinished() 回调。
      */
     fun startListening(callback: VoiceCallback) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            callback.onError("没有麦克风权限")
+            return
+        }
         val rec = recognizer
         if (rec == null) {
             callback.onError("语音引擎尚未就绪")
