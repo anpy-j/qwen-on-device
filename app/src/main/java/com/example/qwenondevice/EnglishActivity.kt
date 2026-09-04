@@ -61,9 +61,13 @@ class EnglishActivity : AppCompatActivity() {
         private const val LOCAL_MODEL_FILENAME = "qwen.task"
         private const val MODEL_SIZE_BYTES = 546_660_344L
 
-        private const val DICT_AI_SYSTEM = """你是英语词典。用户给出一个英文单词，请解释用户给的这个单词（不是示例词），只返回一个 JSON 对象（不要 markdown、不要代码块、不要多余解释文字），格式仿照下面示例（study 只是格式示范）：
-{"word":"study","ipa":"/ˈstʌdi/","cn":"学习；研究","def":"to spend time learning about a subject","inf":"第三人称单数 studies；过去式 studied","example_en":"She studies English every day.","example_cn":"她每天学习英语。"}
-字段含义：word=用户给的单词本身；ipa=国际音标；cn=中文释义；def=简单英文释义（1-2 句）；inf=词形变化（复数/过去式/比较级等，没有就填空字符串）；example_en=一个 B1 简单例句；example_cn=例句中文翻译。若单词不在词典中，也要尽力给出合理的音标、释义和例句。"""
+        private const val DICT_AI_SYSTEM = """你是专业英汉词典。用户输入一个英文单词，请准确给出该单词的音标、中文释义、简短英文释义、词形变化和例句。
+必须仅返回单个合法的 JSON 对象（严禁包含 markdown 代码块、严禁输出任何多余文字）：
+{"word":"apple","ipa":"/ˈæpl/","cn":"苹果","def":"a round fruit with red or green skin","inf":"复数 apples","example_en":"I ate a red apple today.","example_cn":"我今天吃了一个红苹果。"}
+规则：
+1. 必须严格解释用户输入的单词，严禁解释示例词或替换为其他单词。
+2. word 字段必须严格等于用户输入的单词。
+3. 释义必须准确对应用户输入的单词本身。"""
 
         private const val DICT_EXAMPLE_SYSTEM = """你是英语老师。为一个英文单词生成一句简单的英文例句，只返回一行 JSON（不要 markdown、不要多余文字）：
 {"example_en":"...","example_cn":"..."}
@@ -633,13 +637,17 @@ example_en 是包含该单词的 B1 简单英文例句，example_cn 是对应的
                 if (isFinishing || isDestroyed) return@post
                 // 期间用户又查了新词或切换了模式，丢弃过期回包
                 if (seq != dictQuerySeq) return@post
-                if (parsed == null || parsed.cn.isEmpty()) {
+                val wordMismatch = parsed?.word?.isNotEmpty() == true &&
+                    !parsed.word.equals(word, ignoreCase = true) &&
+                    !word.startsWith(parsed.word, ignoreCase = true) &&
+                    !parsed.word.startsWith(word, ignoreCase = true)
+                if (parsed == null || parsed.cn.isEmpty() || wordMismatch) {
                     if (!llmReady) {
                         // requireLlm 已 toast 加载提示，这里把卡片占位改为等待提示
                         (card.getChildAt(1) as? TextView)?.text = "本地 AI 引擎加载中，请稍后重试…"
                         return@post
                     }
-                    // 模型偶发输出格式不合法：自动重试一次，仍失败才提示
+                    // 模型偶发输出格式不合法或词不对题：自动重试一次，仍失败才提示
                     if (attempt == 0) {
                         dictContainer.removeAllViews()
                         lookupByAi(word, notInDict, seq, attempt = 1)
@@ -831,10 +839,11 @@ example_en 是包含该单词的 B1 简单英文例句，example_cn 是对应的
 
         val llm = requireLlm() ?: return
         val conversation = buildString {
-            append(CHAT_SYSTEM).append("\n\n")
+            append("<|im_start|>system\n").append(CHAT_SYSTEM).append("\n<|im_end|>\n")
             for ((role, text) in chatHistory) {
-                append(if (role == "user") "User: " else "Mia: ").append(text).append('\n')
+                append("<|im_start|>").append(role).append('\n').append(text).append("\n<|im_end|>\n")
             }
+            append("<|im_start|>assistant\n")
         }
         val pending = addPendingAssistantBubble()
         val pendingIndex = chatContainer.indexOfChild(pending)
@@ -1643,7 +1652,7 @@ example_en 是包含该单词的 B1 简单英文例句，example_cn 是对应的
             onResult(null)
             return
         }
-        val prompt = "$system\n\n$user"
+        val prompt = "<|im_start|>system\n$system\n<|im_end|>\n<|im_start|>user\n$user\n<|im_end|>\n<|im_start|>assistant\n"
         val future = llm.generateResponseAsync(prompt)
         Futures.addCallback(future, object : FutureCallback<String> {
             override fun onSuccess(result: String?) {
