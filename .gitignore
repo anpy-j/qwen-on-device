@@ -12,3 +12,6 @@ app/release.jks
 .agents/
 AGENTS.md
 description.md
+.gradle-home/
+.attachments/
+.reasonix/

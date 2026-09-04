@@ -15,6 +15,8 @@ object Dictionary {
         val source: String
     )
 
+    // 后台线程写入、主线程读取，需保证可见性
+    @Volatile
     private var index: Map<String, Entry>? = null
     @Volatile
     var loadedCount: Int = 0

@@ -3,6 +3,7 @@ package com.example.qwenondevice
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Typeface
@@ -48,14 +49,22 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "MainActivity"
+        private const val PREFS_NAME = "english_app"
+        private const val KEY_DICT_USE_MODEL = "dict_use_model"
+        private const val KEY_TTS_SPEED = "tts_speed"
 
         // ===== 本地 LLM 模型（Qwen2.5 0.5B q8，约 523 MB）=====
         private const val ASSET_MODEL_FILENAME = "qwen.task"
         private const val LOCAL_MODEL_FILENAME = "qwen.task"
         private const val MODEL_SIZE_BYTES = 546_660_344L
 
-        private const val DICT_AI_SYSTEM = """你是英语词典。针对用户给出的英语单词，只输出一行 JSON（不要 markdown、不要其他文字），字段：
-{"word":"...","ipa":"IPA音标","cn":"中文释义（简短）","example_en":"一个 B1 水平简单例句","example_cn":"例句中文翻译"}"""
+        private const val DICT_AI_SYSTEM = """你是英语词典。用户给出一个英文单词，请解释用户给的这个单词（不是示例词），只返回一个 JSON 对象（不要 markdown、不要代码块、不要多余解释文字），格式仿照下面示例（study 只是格式示范）：
+{"word":"study","ipa":"/ˈstʌdi/","cn":"学习；研究","def":"to spend time learning about a subject","inf":"第三人称单数 studies；过去式 studied","example_en":"She studies English every day.","example_cn":"她每天学习英语。"}
+字段含义：word=用户给的单词本身；ipa=国际音标；cn=中文释义；def=简单英文释义（1-2 句）；inf=词形变化（复数/过去式/比较级等，没有就填空字符串）；example_en=一个 B1 简单例句；example_cn=例句中文翻译。若单词不在词典中，也要尽力给出合理的音标、释义和例句。"""
+
+        private const val DICT_EXAMPLE_SYSTEM = """你是英语老师。为一个英文单词生成一句简单的英文例句，只返回一行 JSON（不要 markdown、不要多余文字）：
+{"example_en":"...","example_cn":"..."}
+example_en 是包含该单词的 B1 简单英文例句，example_cn 是对应的中文翻译。"""
 
         private const val CHAT_SYSTEM = """你是 Mia，一位耐心友好的英语会话伙伴，正在陪用户练习英语口语（B1 水平）。
 规则：
@@ -109,10 +118,15 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var heroStatus: TextView
     private lateinit var heroSubtitle: TextView
+    private lateinit var ttsSpeedPill: TextView
+    private var ttsSpeed = 1.0f
 
     private lateinit var pageDict: LinearLayout
     private lateinit var dictContainer: LinearLayout
     private lateinit var scrollDict: ScrollView
+    private lateinit var tvDictBannerSub: TextView
+    private lateinit var dictModeBundled: TextView
+    private lateinit var dictModeModel: TextView
     private lateinit var pageChat: LinearLayout
     private lateinit var scrollChat: ScrollView
     private lateinit var chatContainer: LinearLayout
@@ -131,6 +145,8 @@ class MainActivity : AppCompatActivity() {
     private var voiceDialog: AlertDialog? = null
 
     private var currentTab: NavTab = NavTab.DICT
+    private var dictUseModel = false
+    private var dictQuerySeq = 0
 
     private var llmInference: LlmInference? = null
     private var llmReady = false
@@ -252,6 +268,10 @@ class MainActivity : AppCompatActivity() {
 
         heroStatus = findViewById(R.id.heroStatus)
         heroSubtitle = findViewById(R.id.heroSubtitle)
+        ttsSpeedPill = findViewById(R.id.ttsSpeedPill)
+        ttsSpeed = prefs.getFloat(KEY_TTS_SPEED, 1.0f).coerceIn(0.7f, 1.3f)
+        refreshTtsSpeedPill()
+        ttsSpeedPill.setOnClickListener { showTtsSpeedDialog() }
 
         pageDict = findViewById(R.id.pageDict)
         dictContainer = findViewById(R.id.dictContainer)
@@ -267,6 +287,9 @@ class MainActivity : AppCompatActivity() {
         btnWordsClear = findViewById(R.id.btnWordsClear)
         wordsContainer = findViewById(R.id.wordsContainer)
         pageShadow = findViewById(R.id.pageShadow)
+        tvDictBannerSub = findViewById(R.id.tvDictBannerSub)
+        dictModeBundled = findViewById(R.id.dictModeBundled)
+        dictModeModel = findViewById(R.id.dictModeModel)
         scrollShadow = findViewById(R.id.scrollShadow)
         shadowContainer = findViewById(R.id.shadowContainer)
 
@@ -309,11 +332,64 @@ class MainActivity : AppCompatActivity() {
 
         loadLlmModel()
         tts.prepareAsync { ok ->
-            if (ok) Log.i(TAG, "TTS engine ready") else Log.e(TAG, "TTS engine failed")
+            if (ok) {
+                Log.i(TAG, "TTS engine ready")
+            } else {
+                Log.e(TAG, "TTS engine failed: ${tts.lastError}")
+            }
         }
-        Dictionary.load(this, { })
+
+        // 词典查词方式：内置词典 / AI 模型（模型模式下不再读取 words.json）
+        dictUseModel = prefs.getBoolean(KEY_DICT_USE_MODEL, false)
+        dictModeBundled.setOnClickListener { setDictMode(false) }
+        dictModeModel.setOnClickListener { setDictMode(true) }
+        refreshDictModeUi()
+        ensureDictionaryLoaded()
 
         setTab(NavTab.DICT)
+    }
+
+    private val prefs: SharedPreferences by lazy { getSharedPreferences(PREFS_NAME, MODE_PRIVATE) }
+
+    private fun setDictMode(useModel: Boolean) {
+        if (dictUseModel == useModel) return
+        dictUseModel = useModel
+        prefs.edit().putBoolean(KEY_DICT_USE_MODEL, useModel).apply()
+        refreshDictModeUi()
+        ensureDictionaryLoaded()
+        if (currentTab == NavTab.DICT) {
+            // 切换后清空旧查询结果，给出对应模式的引导文案
+            dictQuerySeq++
+            dictContainer.removeAllViews()
+            dictContainer.addView(hintCard(dictWelcomeText()))
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun refreshDictModeUi() {
+        tvDictBannerSub.text = if (dictUseModel) {
+            "端侧 AI 逐词解释 · 不依赖内置词库"
+        } else {
+            "9733 高频词已内置 · 点词即查，发音全程离线"
+        }
+        styleModePill(dictModeBundled, !dictUseModel)
+        styleModePill(dictModeModel, dictUseModel)
+    }
+
+    private fun styleModePill(pill: TextView, selected: Boolean) {
+        pill.background = ContextCompat.getDrawable(
+            this,
+            if (selected) R.drawable.bg_chip_pill_selected else R.drawable.bg_chip_pill
+        )
+        pill.setTextColor(
+            if (selected) Color.WHITE else color(R.color.text_primary)
+        )
+    }
+
+    private fun ensureDictionaryLoaded() {
+        // 模型模式不加载 words.json，也不参与查询
+        if (dictUseModel) return
+        Dictionary.load(this, { })
     }
 
     override fun onDestroy() {
@@ -405,10 +481,7 @@ class MainActivity : AppCompatActivity() {
         buildActionChipsForTab(tab)
         when (tab) {
             NavTab.DICT -> if (dictContainer.childCount == 0) {
-                dictContainer.addView(hintCard(
-                    "输入或点下方示例查询单词，也可以直接点麦克风用语音查。" +
-                        "内置 9733 个高频词；查不到的词会由本地 AI 现场解释。"
-                ))
+                dictContainer.addView(hintCard(dictWelcomeText()))
             }
             NavTab.CHAT -> if (chatContainer.childCount == 0) {
                 addAssistantBubble("Hi! I'm Mia, your English practice partner. What did you do last weekend?")
@@ -501,43 +574,77 @@ class MainActivity : AppCompatActivity() {
             toast("请输入单个单词")
             return
         }
-        if (!Dictionary.isLoaded()) {
+        if (!dictUseModel && !Dictionary.isLoaded()) {
             toast("词典还在加载中，请稍等几秒")
             return
         }
-        val entry = Dictionary.lookup(word)
         dictContainer.removeAllViews()
+        if (dictUseModel) {
+            // 模型模式：不读取 words.json，查词全部交给端侧 AI
+            lookupByAi(word, notInDict = false, seq = ++dictQuerySeq)
+            return
+        }
+        val entry = Dictionary.lookup(word)
         if (entry != null) {
             dictContainer.addView(buildDictCard(entry))
             scrollDict.smoothScrollTo(0, 0)
         } else {
-            val card = card()
-            dictContainer.addView(card)
-            card.addView(textView(word.lowercase(), 20, INK, bold = true))
-            card.addView(textView("本地词库未收录，AI 正在现场解释…", 12, FAINT, topMargin = 6))
-            llmAsk(DICT_AI_SYSTEM, word.lowercase()) { result ->
-                val parsed = parseDictJson(result)
-                mainHandler.post {
-                    if (isFinishing || isDestroyed) return@post
-                    if (parsed == null || parsed.cn.isEmpty()) {
-                        toast("AI 解释失败，请换词再试")
+            lookupByAi(word, notInDict = true, seq = ++dictQuerySeq)
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun lookupByAi(word: String, notInDict: Boolean, seq: Int, attempt: Int = 0) {
+        val card = card()
+        dictContainer.addView(card)
+        card.addView(textView(word.lowercase(), 20, INK, bold = true))
+        card.addView(textView(
+            if (notInDict) "本地词库未收录，AI 正在现场解释…" else "AI 正在现场解释…",
+            12, FAINT, topMargin = 6
+        ))
+        llmAsk(DICT_AI_SYSTEM, word.lowercase()) { result ->
+            val parsed = parseDictJson(result)
+            mainHandler.post {
+                if (isFinishing || isDestroyed) return@post
+                // 期间用户又查了新词或切换了模式，丢弃过期回包
+                if (seq != dictQuerySeq) return@post
+                if (parsed == null || parsed.cn.isEmpty()) {
+                    if (!llmReady) {
+                        // requireLlm 已 toast 加载提示，这里把卡片占位改为等待提示
+                        (card.getChildAt(1) as? TextView)?.text = "本地 AI 引擎加载中，请稍后重试…"
                         return@post
                     }
-                    dictContainer.removeAllViews()
-                    dictContainer.addView(buildDictCard(
-                        Dictionary.Entry(
-                            word = parsed.word.ifEmpty { word.lowercase() },
-                            phonetic = parsed.ipa,
-                            definition = "",
-                            translation = parsed.cn,
-                            inflection = "",
-                            tag = "AI 现场解释",
-                            source = "ai"
-                        )
-                    ))
+                    // 模型偶发输出格式不合法：自动重试一次，仍失败才提示
+                    if (attempt == 0) {
+                        dictContainer.removeAllViews()
+                        lookupByAi(word, notInDict, seq, attempt = 1)
+                        return@post
+                    }
+                    toast("AI 解释失败，请换词再试")
+                    return@post
                 }
+                dictContainer.removeAllViews()
+                dictContainer.addView(buildDictCard(
+                    Dictionary.Entry(
+                        // 标题与例句缓存键一律用查询词，防止模型回填示例词
+                        word = word.lowercase(),
+                        phonetic = parsed.ipa,
+                        definition = parsed.def,
+                        translation = parsed.cn,
+                        inflection = parsed.inf,
+                        tag = "AI 现场解释",
+                        source = "ai"
+                    )
+                ))
             }
         }
+    }
+
+    private fun dictWelcomeText(): String = if (dictUseModel) {
+        "输入或点下方示例查询单词，也可以直接点麦克风用语音查。当前为 AI 模型模式，每个词都由本地 AI 逐词解释。"
+    } else {
+        "输入或点下方示例查询单词，也可以直接点麦克风用语音查。" +
+            "内置 9733 个高频词；查不到的词会由本地 AI 现场解释。"
     }
 
     @SuppressLint("SetTextI18n")
@@ -590,14 +697,14 @@ class MainActivity : AppCompatActivity() {
         return card
     }
 
-    private fun cacheExample(word: String, section: LinearLayout) {
+    private fun cacheExample(word: String, section: LinearLayout, attempt: Int = 0) {
         val cached = db.getDictCache(word)
         if (cached != null && cached.first.isNotEmpty()) {
             fillExampleSection(section, cached.first, cached.second)
             return
         }
         section.addView(textView("AI 正在生成例句…", 12, FAINT))
-        llmAsk(DICT_AI_SYSTEM, word) { result ->
+        llmAsk(DICT_EXAMPLE_SYSTEM, word) { result ->
             val parsed = parseDictJson(result)
             mainHandler.post {
                 if (isFinishing || isDestroyed) return@post
@@ -605,9 +712,18 @@ class MainActivity : AppCompatActivity() {
                     db.putDictCache(word, parsed.exampleEn, parsed.exampleCn)
                     section.removeAllViews()
                     fillExampleSection(section, parsed.exampleEn, parsed.exampleCn)
+                } else if (!llmReady) {
+                    // requireLlm 已提示加载中，这里改为等待占位而非“生成失败”
+                    section.removeAllViews()
+                    section.addView(textView("本地 AI 加载中，例句稍后重新查词生成", 12, FAINT))
+                } else if (attempt == 0) {
+                    // 例句生成失败自动重试一次
+                    section.removeAllViews()
+                    section.addView(textView("AI 正在重新生成例句…", 12, FAINT))
+                    cacheExample(word, section, attempt = 1)
                 } else {
                     section.removeAllViews()
-                    section.addView(textView("例句生成失败", 12, FAINT))
+                    section.addView(textView("例句生成失败，可稍后重新查词", 12, FAINT))
                 }
             }
         }
@@ -628,26 +744,54 @@ class MainActivity : AppCompatActivity() {
         val word: String,
         val ipa: String,
         val cn: String,
+        val def: String,
+        val inf: String,
         val exampleEn: String,
         val exampleCn: String
     )
 
     private fun parseDictJson(result: String?): ParsedDict? {
         if (result.isNullOrBlank()) return null
-        val start = result.indexOf('{')
-        val end = result.lastIndexOf('}')
+        // 去掉可能的 markdown 代码块围栏（```json / ```）
+        val text = result
+            .replace(Regex("```(?:json)?\\s*", RegexOption.IGNORE_CASE), "")
+            .replace("```", "")
+            .trim()
+        val start = text.indexOf('{')
+        val end = text.lastIndexOf('}')
         if (start < 0 || end <= start) return null
-        return try {
-            val obj = org.json.JSONObject(result.substring(start, end + 1))
-            ParsedDict(
+        val jsonText = text.substring(start, end + 1)
+        try {
+            val obj = org.json.JSONObject(jsonText)
+            return ParsedDict(
                 word = obj.optString("word").trim(),
                 ipa = obj.optString("ipa").trim().trimStart('/').trimEnd('/'),
                 cn = obj.optString("cn").trim(),
+                def = obj.optString("def").trim().ifEmpty { obj.optString("defEn").trim() },
+                inf = obj.optString("inf").trim().ifEmpty { obj.optString("inflection").trim() },
                 exampleEn = obj.optString("example_en").trim(),
                 exampleCn = obj.optString("example_cn").trim()
             )
         } catch (e: Exception) {
-            null
+            // JSONObject 解析失败（模型偶发输出尾逗号/缺引号等），退回逐字段正则提取
+            fun grab(key: String): String {
+                val m = Regex("\"$key\"\\s*:\\s*\"((?:\\\\.|[^\"\\\\])*)\"").find(jsonText)
+                    ?: return ""
+                return m.groupValues[1].replace("\\\"", "\"").trim()
+            }
+            val word = grab("word")
+            val cn = grab("cn")
+            val exampleEn = grab("example_en")
+            if (word.isEmpty() && cn.isEmpty() && exampleEn.isEmpty()) return null
+            return ParsedDict(
+                word = word,
+                ipa = grab("ipa").trimStart('/').trimEnd('/'),
+                cn = cn,
+                def = grab("def").ifEmpty { grab("defEn") },
+                inf = grab("inf").ifEmpty { grab("inflection") },
+                exampleEn = exampleEn,
+                exampleCn = grab("example_cn")
+            )
         }
     }
 
@@ -835,28 +979,40 @@ class MainActivity : AppCompatActivity() {
     // =========================================================================
 
     @SuppressLint("SetTextI18n")
-    private fun doAddWord(raw: String) {
+    private fun doAddWord(raw: String, attempt: Int = 0) {
         val word = raw.trim()
         if (!isSingleWord(word)) {
             toast("请输入单个单词")
             return
         }
-        val entry = if (Dictionary.isLoaded()) Dictionary.lookup(word) else null
+        // 模型模式下不查内置词库，加词同样交给端侧 AI 解释
+        val entry = if (!dictUseModel && Dictionary.isLoaded()) Dictionary.lookup(word) else null
         if (entry != null) {
             db.upsertWord(entry.word, entry.phonetic, firstLine(entry.translation))
             toast("已加入单词本：${entry.word}")
             renderWordsView()
         } else {
-            toast("本地词库未收录，AI 正在解释并加入…")
+            if (attempt == 0) {
+                toast(if (dictUseModel) "AI 正在解释并加入…" else "本地词库未收录，AI 正在解释并加入…")
+            }
             llmAsk(DICT_AI_SYSTEM, word.lowercase()) { result ->
                 val parsed = parseDictJson(result)
                 mainHandler.post {
                     if (isFinishing || isDestroyed) return@post
                     if (parsed == null || parsed.cn.isEmpty()) {
+                        if (!llmReady) {
+                            // requireLlm 已提示加载中，避免误报“加入失败”
+                            return@post
+                        }
+                        // 模型偶发输出不合法：自动重试一次
+                        if (attempt == 0) {
+                            doAddWord(word, attempt = 1)
+                            return@post
+                        }
                         toast("加入失败，请再试一次")
                     } else {
-                        db.upsertWord(parsed.word.ifEmpty { word }, parsed.ipa, parsed.cn)
-                        toast("已加入单词本：${parsed.word.ifEmpty { word }}")
+                        db.upsertWord(word, parsed.ipa, parsed.cn)
+                        toast("已加入单词本：$word")
                         renderWordsView()
                     }
                 }
@@ -952,6 +1108,10 @@ class MainActivity : AppCompatActivity() {
         val row = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
         }
         val ratings = listOf(
             Triple("忘记", ROSE, 0),
@@ -1019,16 +1179,40 @@ class MainActivity : AppCompatActivity() {
     // TTS 封装
     // =========================================================================
 
-    private fun ttsSpeak(text: String, speed: Float = 1f) {
+    private fun ttsSpeak(text: String, speed: Float? = null) {
         val clean = text.trim()
         if (clean.isEmpty()) return
+        val effSpeed = speed ?: ttsSpeed
         if (tts.isReady) {
-            tts.speak(clean, speed)
+            tts.speak(clean, effSpeed)
         } else {
             tts.prepareAsync { ok ->
-                if (ok) tts.speak(clean, speed) else toast("英文发音引擎未就绪，无法朗读")
+                if (ok) tts.speak(clean, effSpeed)
+                else toast(tts.lastError ?: "英文发音引擎未就绪，无法朗读")
             }
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun refreshTtsSpeedPill() {
+        ttsSpeedPill.text = "语速 ${ttsSpeed}×"
+    }
+
+    private fun showTtsSpeedDialog() {
+        val options = arrayOf("0.7x 慢速", "0.9x", "1.0x 标准", "1.1x", "1.3x 快速")
+        val values = floatArrayOf(0.7f, 0.9f, 1.0f, 1.1f, 1.3f)
+        val current = values.indexOfFirst { it == ttsSpeed }.let { if (it < 0) 2 else it }
+        AlertDialog.Builder(this)
+            .setTitle("发音语速")
+            .setSingleChoiceItems(options, current) { dialog, which ->
+                ttsSpeed = values[which]
+                prefs.edit().putFloat(KEY_TTS_SPEED, ttsSpeed).apply()
+                refreshTtsSpeedPill()
+                toast("发音语速：${options[which]}")
+                dialog.dismiss()
+            }
+            .setNegativeButton("取消", null)
+            .show()
     }
 
     private fun speakEnglishPart(text: String) {
@@ -1071,7 +1255,7 @@ class MainActivity : AppCompatActivity() {
         row.addView(smallPill("▶ 播放", { ttsSpeak(clean) }).also {
             (it.layoutParams as LinearLayout.LayoutParams).marginStart = 0
         })
-        row.addView(smallPill("🐢 慢速", { ttsSpeak(clean, 0.75f) }))
+        row.addView(smallPill("🐢 慢速", { ttsSpeak(clean, ttsSpeed.coerceAtMost(0.75f)) }))
         card.addView(row)
 
         shadowContainer.addView(hintCard(
