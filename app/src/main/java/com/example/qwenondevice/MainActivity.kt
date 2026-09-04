@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         refreshSummaries()
+        refreshSpeed()
         input.setText(prefs.getString("dashboard_draft", "").orEmpty())
         input.setSelection(input.text.length)
     }
@@ -121,10 +122,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showSpeedDialog() {
-        val labels = arrayOf("0.7× 慢速", "0.9×", "1.0× 标准", "1.1×", "1.3× 快速")
-        val values = floatArrayOf(0.7f, 0.9f, 1.0f, 1.1f, 1.3f)
+        val labels = arrayOf("0.3× 极慢", "0.5× 较慢", "0.7× 慢速", "0.9×", "1.0× 标准", "1.1×", "1.3× 快速")
+        val values = floatArrayOf(0.3f, 0.5f, 0.7f, 0.9f, 1.0f, 1.1f, 1.3f)
         val speed = prefs.getFloat("tts_speed", 1.0f)
-        val selected = values.indexOfFirst { it == speed }.let { if (it < 0) 2 else it }
+        val selected = values.indexOfFirst { kotlin.math.abs(it - speed) < 0.05f }.let { if (it < 0) 4 else it }
         AlertDialog.Builder(this)
             .setTitle("全局英文发音语速")
             .setSingleChoiceItems(labels, selected) { dialog, which ->

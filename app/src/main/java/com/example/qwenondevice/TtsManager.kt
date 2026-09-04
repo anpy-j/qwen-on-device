@@ -317,7 +317,7 @@ class TtsManager(context: Context) {
         stopPlayback()
         Thread {
             try {
-                val audio: GeneratedAudio = engine.generate(text, 0, speed.coerceIn(0.7f, 1.3f))
+                val audio: GeneratedAudio = engine.generate(text, 0, speed.coerceIn(0.3f, 1.5f))
                 val wav = File(appContext.cacheDir, "tts_${System.currentTimeMillis()}.wav")
                 audio.save(wav.absolutePath)
                 mainHandler.post { playWav(wav, onDone) }

@@ -277,7 +277,7 @@ example_en 是包含该单词的 B1 简单英文例句，example_cn 是对应的
         heroStatus = findViewById(R.id.heroStatus)
         heroSubtitle = findViewById(R.id.heroSubtitle)
         ttsSpeedPill = findViewById(R.id.ttsSpeedPill)
-        ttsSpeed = prefs.getFloat(KEY_TTS_SPEED, 1.0f).coerceIn(0.7f, 1.3f)
+        ttsSpeed = prefs.getFloat(KEY_TTS_SPEED, 1.0f).coerceIn(0.3f, 1.5f)
         refreshTtsSpeedPill()
         ttsSpeedPill.setOnClickListener { showTtsSpeedDialog() }
 
@@ -1224,9 +1224,9 @@ example_en 是包含该单词的 B1 简单英文例句，example_cn 是对应的
     }
 
     private fun showTtsSpeedDialog() {
-        val options = arrayOf("0.7x 慢速", "0.9x", "1.0x 标准", "1.1x", "1.3x 快速")
-        val values = floatArrayOf(0.7f, 0.9f, 1.0f, 1.1f, 1.3f)
-        val current = values.indexOfFirst { it == ttsSpeed }.let { if (it < 0) 2 else it }
+        val options = arrayOf("0.3x 极慢", "0.5x 较慢", "0.7x 慢速", "0.9x", "1.0x 标准", "1.1x", "1.3x 快速")
+        val values = floatArrayOf(0.3f, 0.5f, 0.7f, 0.9f, 1.0f, 1.1f, 1.3f)
+        val current = values.indexOfFirst { kotlin.math.abs(it - ttsSpeed) < 0.05f }.let { if (it < 0) 4 else it }
         AlertDialog.Builder(this)
             .setTitle("发音语速")
             .setSingleChoiceItems(options, current) { dialog, which ->
@@ -1280,7 +1280,7 @@ example_en 是包含该单词的 B1 简单英文例句，example_cn 是对应的
         row.addView(smallPill("▶ 播放", { ttsSpeak(clean) }).also {
             (it.layoutParams as LinearLayout.LayoutParams).marginStart = 0
         })
-        row.addView(smallPill("🐢 慢速", { ttsSpeak(clean, ttsSpeed.coerceAtMost(0.75f)) }))
+        row.addView(smallPill("🐢 慢速", { ttsSpeak(clean, (ttsSpeed * 0.75f).coerceIn(0.3f, 0.75f)) }))
         card.addView(row)
 
         shadowContainer.addView(hintCard(
